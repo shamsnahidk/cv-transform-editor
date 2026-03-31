@@ -12,3 +12,12 @@ Interactive 2D image transformation tool built using OpenCV and NumPy.
 
 
 ## Project Structure
+cv-transform-editor/
+├── src/
+│ ├── main.py
+│ ├── transformations.py
+│ └── utils.py
+├── assets/
+│ └── sample.jpg
+├── README.md
+├── requirements.txt
