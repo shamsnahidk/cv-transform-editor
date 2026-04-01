@@ -1,44 +1,70 @@
 import cv2
 from transformations import translate, rotate, scale, shear
+from utils import stack_side_by_side, add_labels
 
-image = cv2.imread("assets/sample.jpg")
 
-while True:
-    print("\nChoose Transformation:")
-    print("1. Translate")
-    print("2. Rotate")
-    print("3. Scale")
-    print("4. Shear")
-    print("5. Exit")
+def print_matrix(matrix):
+    print("\nTransformation Matrix:")
+    print(matrix)
 
-    choice = input("Enter choice: ")
 
-    if choice == "1":
-        tx = int(input("Enter x shift: "))
-        ty = int(input("Enter y shift: "))
-        result = translate(image, tx, ty)
+def main():
+    image_path = "assets/sample.jpg"
+    image = cv2.imread(image_path)
 
-    elif choice == "2":
-        angle = float(input("Enter angle: "))
-        result = rotate(image, angle)
+    if image is None:
+        print(f"Error: Could not load image from {image_path}")
+        return
 
-    elif choice == "3":
-        fx = float(input("Scale x: "))
-        fy = float(input("Scale y: "))
-        result = scale(image, fx, fy)
+    while True:
+        print("\nChoose Transformation:")
+        print("1. Translate")
+        print("2. Rotate")
+        print("3. Scale")
+        print("4. Shear")
+        print("5. Exit")
 
-    elif choice == "4":
-        shx = float(input("Shear x: "))
-        shy = float(input("Shear y: "))
-        result = shear(image, shx, shy)
+        choice = input("Enter choice: ").strip()
 
-    elif choice == "5":
-        break
+        if choice == "1":
+            tx = int(input("Enter x shift: "))
+            ty = int(input("Enter y shift: "))
+            result, matrix = translate(image, tx, ty)
 
-    else:
-        print("Invalid choice")
-        continue
+        elif choice == "2":
+            angle = float(input("Enter angle in degrees: "))
+            result, matrix = rotate(image, angle)
 
-    cv2.imshow("Transformed Image", result)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+        elif choice == "3":
+            fx = float(input("Enter scale factor for x: "))
+            fy = float(input("Enter scale factor for y: "))
+            result, matrix = scale(image, fx, fy)
+
+        elif choice == "4":
+            shx = float(input("Enter shear factor for x: "))
+            shy = float(input("Enter shear factor for y: "))
+            result, matrix = shear(image, shx, shy)
+
+        elif choice == "5":
+            print("Exiting program.")
+            break
+
+        else:
+            print("Invalid choice. Try again.")
+            continue
+
+        print_matrix(matrix)
+
+        labeled_original, labeled_result = add_labels(image, result)
+        comparison = stack_side_by_side(labeled_original, labeled_result)
+
+        cv2.imshow("CV Transform Editor", comparison)
+        key = cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
+        if key == 27:
+            break
+
+
+if __name__ == "__main__":
+    main()
